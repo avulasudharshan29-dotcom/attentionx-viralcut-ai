@@ -1,0 +1,421 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ax-bg:#08090c;--ax-surface:#0f1117;--ax-card:#161b24;--ax-border:#1e2535;
+  --ax-accent:#e8ff47;--ax-accent2:#7c6eff;--ax-text:#f0f2f8;--ax-muted:#8892a4;
+  --ax-red:#ff4e4e;--ax-green:#2ecc8a;
+}
+body{background:var(--ax-bg);color:var(--ax-text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:'Syne',sans-serif}
+
+.app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--ax-border);background:rgba(8,9,12,0.9);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--ax-accent);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:18px;height:18px}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.5px}
+.logo-text span{color:var(--ax-accent)}
+.nav-badge{background:rgba(232,255,71,0.1);color:var(--ax-accent);font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;border:1px solid rgba(232,255,71,0.25)}
+
+/* LAYOUT */
+.main{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 65px)}
+
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--ax-border);padding:28px 24px;display:flex;flex-direction:column;gap:24px;background:var(--ax-surface)}
+.upload-zone{border:2px dashed var(--ax-border);border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;background:rgba(124,110,255,0.04)}
+.upload-zone:hover{border-color:var(--ax-accent2);background:rgba(124,110,255,0.08)}
+.upload-icon{width:48px;height:48px;background:rgba(124,110,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.upload-zone h3{font-size:14px;font-weight:500;margin-bottom:6px}
+.upload-zone p{font-size:12px;color:var(--ax-muted);line-height:1.5}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.section-title{font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--ax-muted);text-transform:uppercase;margin-bottom:12px}
+
+.config-grid{display:flex;flex-direction:column;gap:10px}
+.config-row{display:flex;align-items:center;justify-content:space-between}
+.config-label{font-size:13px;color:var(--ax-text)}
+.config-sub{font-size:11px;color:var(--ax-muted);margin-top:2px}
+
+.toggle{width:40px;height:22px;background:var(--ax-border);border-radius:11px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle.on{background:var(--ax-accent)}
+.toggle::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform 0.2s}
+.toggle.on::after{transform:translateX(18px);background:var(--ax-bg)}
+
+.slider-wrap{margin-top:4px}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:6px}
+.slider-row input[type=range]{flex:1;accent-color:var(--ax-accent);height:3px}
+.slider-val{font-size:12px;font-weight:500;color:var(--ax-accent);min-width:28px;text-align:right}
+
+.process-btn{width:100%;padding:14px;background:var(--ax-accent);color:var(--ax-bg);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.03em;border:none;border-radius:10px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.process-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.process-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.process-btn .spinner{width:16px;height:16px;border:2px solid rgba(8,9,12,0.3);border-top-color:var(--ax-bg);border-radius:50%;animation:spin 0.7s linear infinite;display:none}
+.process-btn.loading .spinner{display:block}
+.process-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CONTENT AREA */
+.content{padding:28px 32px;display:flex;flex-direction:column;gap:24px;overflow-y:auto}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--ax-card);border:1px solid var(--ax-border);border-radius:12px;padding:16px 18px}
+.stat-label{font-size:11px;color:var(--ax-muted);margin-bottom:8px}
+.stat-val{font-size:24px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:-0.5px}
+.stat-val.green{color:var(--ax-green)}
+.stat-val.accent{color:var(--ax-accent)}
+.stat-val.purple{color:var(--ax-accent2)}
+
+/* WAVEFORM */
+.waveform-section{background:var(--ax-card);border:1px solid var(--ax-border);border-radius:14px;padding:20px 22px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-header h3{font-size:14px;font-weight:500}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500}
+.badge-green{background:rgba(46,204,138,0.15);color:var(--ax-green)}
+.badge-purple{background:rgba(124,110,255,0.15);color:var(--ax-accent2)}
+.badge-amber{background:rgba(255,181,71,0.15);color:#ffb547}
+
+.waveform{height:80px;display:flex;align-items:center;gap:1.5px;overflow:hidden;border-radius:8px;background:rgba(255,255,255,0.02);padding:0 8px}
+.wave-bar{flex:1;border-radius:2px;transition:background 0.3s;min-width:2px}
+
+/* CLIPS GRID */
+.clips-section{background:var(--ax-card);border:1px solid var(--ax-border);border-radius:14px;padding:20px 22px}
+.clips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.clip-card{background:var(--ax-surface);border:1px solid var(--ax-border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s}
+.clip-card:hover{border-color:var(--ax-accent);transform:translateY(-2px)}
+.clip-thumb{width:100%;aspect-ratio:9/16;background:linear-gradient(160deg,#0f1117,#1a1040);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.clip-thumb-inner{width:60%;aspect-ratio:9/16;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative}
+.face-circle{width:40px;height:40px;border-radius:50%;background:rgba(232,255,71,0.15);border:2px solid var(--ax-accent);display:flex;align-items:center;justify-content:center;font-size:16px}
+.caption-bar{width:90%;height:6px;border-radius:3px;background:rgba(232,255,71,0.6)}
+.caption-bar2{width:70%;height:4px;border-radius:2px;background:rgba(232,255,71,0.3)}
+.clip-score{position:absolute;top:8px;right:8px;background:rgba(232,255,71,0.9);color:var(--ax-bg);font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;font-family:'Syne',sans-serif}
+.peak-dot{position:absolute;top:8px;left:8px;width:8px;height:8px;border-radius:50%;background:var(--ax-red);box-shadow:0 0 6px var(--ax-red)}
+.clip-info{padding:10px 12px}
+.clip-time{font-size:11px;color:var(--ax-muted);margin-bottom:4px}
+.clip-title{font-size:12px;font-weight:500;line-height:1.4;color:var(--ax-text)}
+.clip-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.clip-tag{font-size:10px;padding:2px 7px;border-radius:20px}
+
+/* TRANSCRIPT PANEL */
+.transcript-section{background:var(--ax-card);border:1px solid var(--ax-border);border-radius:14px;padding:20px 22px}
+.transcript-body{margin-top:14px;max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.t-line{display:flex;gap:14px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:flex-start}
+.t-line:last-child{border-bottom:none}
+.t-time{font-size:11px;color:var(--ax-accent2);font-family:'Syne',sans-serif;min-width:40px;font-weight:500;padding-top:1px}
+.t-text{font-size:13px;color:var(--ax-muted);line-height:1.5}
+.t-text .highlight{color:var(--ax-text);font-weight:500}
+.t-peak{width:6px;height:6px;border-radius:50%;background:var(--ax-red);margin-top:5px;flex-shrink:0}
+
+/* PROGRESS */
+.progress-section{background:var(--ax-card);border:1px solid var(--ax-border);border-radius:14px;padding:20px 22px;display:none}
+.progress-steps{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.step{display:flex;align-items:center;gap:12px}
+.step-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ax-border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all 0.3s}
+.step-icon.done{background:var(--ax-accent);border-color:var(--ax-accent);color:var(--ax-bg)}
+.step-icon.active{border-color:var(--ax-accent2);color:var(--ax-accent2);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(124,110,255,0.4)}50%{box-shadow:0 0 0 6px rgba(124,110,255,0)}}
+.step-label{font-size:13px}
+.step-label span{font-size:11px;color:var(--ax-muted);display:block;margin-top:2px}
+.progress-bar-wrap{height:3px;background:var(--ax-border);border-radius:2px;margin-top:16px}
+.progress-bar-fill{height:3px;background:var(--ax-accent);border-radius:2px;width:0;transition:width 0.5s ease}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;gap:12px;color:var(--ax-muted)}
+.empty-state h3{font-size:15px;color:var(--ax-text);font-family:'Syne',sans-serif}
+.empty-state p{font-size:13px;line-height:1.6;max-width:280px}
+</style>
+
+<div class="app">
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 18 18" fill="none"><path d="M9 2L16 6V12L9 16L2 12V6L9 2Z" fill="#08090c" stroke="#08090c" stroke-width="0.5"/><path d="M9 5L13 7.5V12.5L9 15L5 12.5V7.5L9 5Z" fill="#08090c"/><circle cx="9" cy="9" r="3" fill="#e8ff47"/></svg>
+      </div>
+      <span class="logo-text">Attention<span>X</span></span>
+    </div>
+    <div class="nav-badge">AI Hackathon Build</div>
+  </nav>
+
+  <div class="main">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="section-title">Upload Video</div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="video/*" id="fileInput" onchange="handleFile(this)">
+          <div class="upload-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c6eff" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <h3 id="uploadLabel">Drop your video here</h3>
+          <p>MP4, MOV, AVI supported<br>Up to 2GB</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Processing Options</div>
+        <div class="config-grid">
+          <div>
+            <div class="config-row">
+              <div><div class="config-label">Smart Crop (9:16)</div><div class="config-sub">Face-track & vertical crop</div></div>
+              <div class="toggle on" id="t1" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+          <div>
+            <div class="config-row">
+              <div><div class="config-label">Dynamic Captions</div><div class="config-sub">Karaoke-style overlays</div></div>
+              <div class="toggle on" id="t2" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+          <div>
+            <div class="config-row">
+              <div><div class="config-label">Hook Headlines</div><div class="config-sub">AI-generated scroll-stoppers</div></div>
+              <div class="toggle on" id="t3" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+          <div>
+            <div class="config-row">
+              <div><div class="config-label">Audio Spike Detection</div><div class="config-sub">Find passionate moments</div></div>
+              <div class="toggle on" id="t4" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Clip Settings</div>
+        <div class="slider-wrap">
+          <div class="config-label">Clip duration (seconds)</div>
+          <div class="slider-row">
+            <input type="range" min="30" max="90" value="60" id="dur" oninput="document.getElementById('durV').textContent=this.value+'s'">
+            <span class="slider-val" id="durV">60s</span>
+          </div>
+        </div>
+        <div class="slider-wrap" style="margin-top:12px">
+          <div class="config-label">Max clips to generate</div>
+          <div class="slider-row">
+            <input type="range" min="3" max="12" value="6" id="clips" oninput="document.getElementById('clipsV').textContent=this.value">
+            <span class="slider-val" id="clipsV">6</span>
+          </div>
+        </div>
+        <div class="slider-wrap" style="margin-top:12px">
+          <div class="config-label">Viral score threshold</div>
+          <div class="slider-row">
+            <input type="range" min="50" max="95" value="70" id="thresh" oninput="document.getElementById('threshV').textContent=this.value+'%'">
+            <span class="slider-val" id="threshV">70%</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="process-btn" id="processBtn" onclick="startProcessing()" disabled>
+        <div class="spinner"></div>
+        <span class="btn-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:6px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Generate Clips
+        </span>
+      </button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1e2535" stroke-width="1.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 2l-4 5-4-5"/><circle cx="12" cy="14" r="2.5"/></svg>
+        <h3>No video loaded</h3>
+        <p>Upload a long-form video to automatically extract viral short-form clips with AI.</p>
+      </div>
+
+      <!-- PROGRESS (hidden initially) -->
+      <div class="progress-section" id="progressSection">
+        <div class="section-header">
+          <h3>Processing pipeline</h3>
+          <span class="badge badge-purple" id="progressBadge">Running</span>
+        </div>
+        <div class="progress-steps">
+          <div class="step" id="step1"><div class="step-icon" id="si1">1</div><div class="step-label">Transcription via Whisper<span>Converting audio to timestamped text</span></div></div>
+          <div class="step" id="step2"><div class="step-icon" id="si2">2</div><div class="step-label">Sentiment & emotion analysis<span>Gemini 1.5 scanning for emotional peaks</span></div></div>
+          <div class="step" id="step3"><div class="step-icon" id="si3">3</div><div class="step-label">Audio loudness mapping<span>Librosa detecting high-energy moments</span></div></div>
+          <div class="step" id="step4"><div class="step-icon" id="si4">4</div><div class="step-label">Face tracking & smart crop<span>MediaPipe centering speaker in 9:16</span></div></div>
+          <div class="step" id="step5"><div class="step-icon" id="si5">5</div><div class="step-label">Caption generation & hook writing<span>Applying karaoke overlays & headlines</span></div></div>
+          <div class="step" id="step6"><div class="step-icon" id="si6">6</div><div class="step-label">Clip export<span>MoviePy rendering final videos</span></div></div>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pBar"></div></div>
+      </div>
+
+      <!-- STATS (hidden initially) -->
+      <div class="stats-row" id="statsRow" style="display:none">
+        <div class="stat-card"><div class="stat-label">Duration analyzed</div><div class="stat-val accent">58:42</div></div>
+        <div class="stat-card"><div class="stat-label">Emotional peaks found</div><div class="stat-val green">23</div></div>
+        <div class="stat-card"><div class="stat-label">Clips generated</div><div class="stat-val">6</div></div>
+        <div class="stat-card"><div class="stat-label">Avg viral score</div><div class="stat-val purple">84%</div></div>
+      </div>
+
+      <!-- WAVEFORM (hidden initially) -->
+      <div class="waveform-section" id="waveSection" style="display:none">
+        <div class="section-header">
+          <h3>Audio energy map</h3>
+          <span class="badge badge-green">6 peaks detected</span>
+        </div>
+        <div class="waveform" id="waveform"></div>
+        <div style="display:flex;gap:16px;margin-top:12px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ax-muted)"><div style="width:8px;height:8px;border-radius:50%;background:var(--ax-red)"></div>Emotional peak</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ax-muted)"><div style="width:8px;height:8px;border-radius:50%;background:var(--ax-accent2)"></div>High energy</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ax-muted)"><div style="width:8px;height:8px;border-radius:50%;background:#1e2535"></div>Baseline</div>
+        </div>
+      </div>
+
+      <!-- CLIPS GRID (hidden initially) -->
+      <div class="clips-section" id="clipsSection" style="display:none">
+        <div class="section-header">
+          <h3>Generated clips</h3>
+          <span class="badge badge-green">Ready to download</span>
+        </div>
+        <div class="clips-grid" id="clipsGrid"></div>
+      </div>
+
+      <!-- TRANSCRIPT (hidden initially) -->
+      <div class="transcript-section" id="transcriptSection" style="display:none">
+        <div class="section-header">
+          <h3>Transcript preview</h3>
+          <span class="badge badge-purple">Whisper ASR</span>
+        </div>
+        <div class="transcript-body" id="transcriptBody"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+const clips = [
+  {score:94,time:'08:23–09:22',title:'The moment you stop caring about what others think is when everything changes',tags:['mindset','viral','emotional'],peak:true},
+  {score:88,time:'14:07–15:05',title:'Nobody teaches you this in school. Three principles that rebuilt my life',tags:['education','insight'],peak:true},
+  {score:82,time:'22:31–23:28',title:'This one question changed how I see every single challenge',tags:['growth','wisdom'],peak:false},
+  {score:91,time:'31:14–32:12',title:'I was dead broke at 35. Here is the turning point nobody talks about',tags:['story','emotional','viral'],peak:true},
+  {score:79,time:'44:52–45:50',title:'The compound effect is real but everyone misunderstands how it starts',tags:['insight','finance'],peak:false},
+  {score:86,time:'51:09–52:07',title:'Stop optimizing. Start executing. The difference is everything',tags:['motivation','actionable'],peak:true},
+];
+
+const transcriptLines = [
+  {t:'08:23',text:'And I remember standing there, completely <span class="highlight">overwhelmed</span>, thinking — what if nobody ever believes in me?',peak:true},
+  {t:'08:51',text:'That\'s when I realized the only validation I ever needed was <span class="highlight">my own</span>. Everything changed that day.',peak:false},
+  {t:'14:07',text:'School teaches you history, math, science. But <span class="highlight">nobody teaches you how to fail forward.</span>',peak:true},
+  {t:'14:39',text:'Principle one: <span class="highlight">embrace discomfort as data</span>, not danger. Your body is signaling growth, not threat.',peak:false},
+  {t:'22:31',text:'Ask yourself: if this problem <span class="highlight">couldn\'t get worse</span>, what would I do differently today?',peak:true},
+  {t:'31:14',text:'I was <span class="highlight">dead broke at 35</span>. I mean not a dollar to my name. And that became my greatest teacher.',peak:true},
+];
+
+function handleFile(input) {
+  if (input.files && input.files[0]) {
+    const name = input.files[0].name;
+    document.getElementById('uploadLabel').textContent = name.length > 22 ? name.slice(0,20)+'…' : name;
+    document.getElementById('processBtn').disabled = false;
+    document.getElementById('emptyState').style.display = 'none';
+  }
+}
+
+function startProcessing() {
+  const btn = document.getElementById('processBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  document.getElementById('progressSection').style.display = 'block';
+  document.getElementById('statsRow').style.display = 'none';
+  document.getElementById('waveSection').style.display = 'none';
+  document.getElementById('clipsSection').style.display = 'none';
+  document.getElementById('transcriptSection').style.display = 'none';
+
+  const steps = [1,2,3,4,5,6];
+  const pcts = [16,33,50,66,83,100];
+  let i = 0;
+
+  function advanceStep() {
+    if (i > 0) {
+      document.getElementById('si'+i).classList.remove('active');
+      document.getElementById('si'+i).classList.add('done');
+      document.getElementById('si'+i).innerHTML = '✓';
+    }
+    i++;
+    if (i <= 6) {
+      document.getElementById('si'+i).classList.add('active');
+      document.getElementById('pBar').style.width = pcts[i-1]+'%';
+      const delays = [1400,2000,1600,2200,1800,1200];
+      setTimeout(advanceStep, delays[i-1]);
+    } else {
+      finishProcessing();
+    }
+  }
+  advanceStep();
+}
+
+function finishProcessing() {
+  document.getElementById('progressBadge').textContent = 'Complete';
+  document.getElementById('progressBadge').className = 'badge badge-green';
+  const btn = document.getElementById('processBtn');
+  btn.classList.remove('loading');
+  btn.querySelector('.btn-text').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>Done! Process another';
+  btn.disabled = false;
+  btn.onclick = () => { location.reload(); };
+
+  document.getElementById('statsRow').style.display = 'grid';
+  document.getElementById('waveSection').style.display = 'block';
+  document.getElementById('clipsSection').style.display = 'block';
+  document.getElementById('transcriptSection').style.display = 'block';
+
+  buildWaveform();
+  buildClips();
+  buildTranscript();
+}
+
+function buildWaveform() {
+  const wf = document.getElementById('waveform');
+  const peaks = new Set([12,13,14,28,29,42,43,44,62,63,64,82,83,104,105,106,118,119]);
+  const highs = new Set([10,11,15,16,26,27,30,31,40,41,45,46,60,61,65,66,80,81,84,85,102,103,107,108,116,117,120,121]);
+  for (let i = 0; i < 140; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'wave-bar';
+    const h = Math.max(8, Math.floor(Math.random()*55 + 15));
+    bar.style.height = h+'px';
+    if (peaks.has(i)) bar.style.background = 'var(--ax-red)';
+    else if (highs.has(i)) bar.style.background = 'var(--ax-accent2)';
+    else bar.style.background = 'var(--ax-border)';
+    wf.appendChild(bar);
+  }
+}
+
+function buildClips() {
+  const grid = document.getElementById('clipsGrid');
+  const tagColors = {viral:'badge-green',emotional:'badge-green',mindset:'badge-purple',insight:'badge-purple',education:'badge-purple',story:'badge-green',growth:'badge-purple',finance:'badge-amber',motivation:'badge-green',actionable:'badge-purple',wisdom:'badge-amber'};
+  clips.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'clip-card';
+    card.innerHTML = `<div class="clip-thumb">
+      <div class="clip-thumb-inner">
+        <div class="face-circle">👤</div>
+        <div class="caption-bar"></div>
+        <div class="caption-bar2"></div>
+      </div>
+      <div class="clip-score">${c.score}%</div>
+      ${c.peak ? '<div class="peak-dot"></div>' : ''}
+    </div>
+    <div class="clip-info">
+      <div class="clip-time">${c.time}</div>
+      <div class="clip-title">${c.title}</div>
+      <div class="clip-tags">${c.tags.slice(0,2).map(t=>`<span class="clip-tag badge ${tagColors[t]||'badge-purple'}">${t}</span>`).join('')}</div>
+    </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function buildTranscript() {
+  const body = document.getElementById('transcriptBody');
+  transcriptLines.forEach(l => {
+    const line = document.createElement('div');
+    line.className = 't-line';
+    line.innerHTML = `<span class="t-time">${l.t}</span>${l.peak ? '<div class="t-peak"></div>' : '<div style="width:6px;flex-shrink:0"></div>'}<span class="t-text">${l.text}</span>`;
+    body.appendChild(line);
+  });
+}
+</script>
