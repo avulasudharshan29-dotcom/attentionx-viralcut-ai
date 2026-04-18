@@ -158,3 +158,6 @@ attentionx/
 | enable_smart_crop | true | — |
 | enable_captions | true | — |
 | enable_hook_headlines | true | — |
+
+application demo video link:   https://drive.google.com/drive/folders/1oa-SrqF6WgpTK3sbjqcj3IS9lqPZ1aUB?usp=sharing
+
